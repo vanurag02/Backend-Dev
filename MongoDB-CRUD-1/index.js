@@ -34,11 +34,20 @@ app.post("/saveform", async (req, res) => {
     res.redirect("/userdata");
     console.log("User registered successfully");
   } catch (error) {
-    console.error(error.message);
+    console.error("Something went wrong ", error.message);
   }
 });
 
 /* =============== READING DATA =============== */
+app.get("/userdata", async (req, res) => {
+  try {
+    const result = await userSchema.find();
+    res.render("userdata.ejs", { data: result });
+    console.log("Data fetched successfully");
+  } catch (error) {
+    console.error("Something went wrong ", error.message);
+  }
+});
 
 /* =============== FALLBACK FOUTING =============== */
 app.use((req, res) => {
