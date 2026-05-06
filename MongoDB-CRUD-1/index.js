@@ -13,6 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 /* =============== DATABASE CONNECTION IMPORT =============== */
 const connection = require("./config/db");
 
+/* =============== SCHEMA IMPORT =============== */
+const userSchema = require("./model/userSchema");
+
 /* =============== BASIC ROUTE =============== */
 app.get("/", (req, res) => {
   try {
@@ -24,14 +27,18 @@ app.get("/", (req, res) => {
 });
 
 /* =============== HANDLING USER DATA =============== */
-app.post("/saveform", (req, res) => {
+app.post("/saveform", async (req, res) => {
   try {
-    res.send(req.body);
+    const result = new userSchema(req.body); // INSTANCE CREATED
+    await result.save();
+    res.redirect("/userdata");
     console.log("User registered successfully");
   } catch (error) {
     console.error(error.message);
   }
 });
+
+/* =============== READING DATA =============== */
 
 /* =============== FALLBACK FOUTING =============== */
 app.use((req, res) => {
