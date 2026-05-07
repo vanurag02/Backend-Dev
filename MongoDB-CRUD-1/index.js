@@ -49,6 +49,20 @@ app.get("/userdata", async (req, res) => {
   }
 });
 
+/* =============== DELETING USER =============== */
+app.get("/delete/:id", async (req, res) => {
+  try {
+    // ACCESSING ID -> req.params.id
+    let id = req.params.id;
+    await userSchema.findByIdAndDelete(id);
+    res.redirect("/userdata");
+    console.log("User deleted successfully.");
+  } catch (error) {
+    res.send("Something went wrong.");
+    console.log(error.message);
+  }
+});
+
 /* =============== FALLBACK FOUTING =============== */
 app.use((req, res) => {
   res.render("error.ejs");

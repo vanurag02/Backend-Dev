@@ -4,7 +4,6 @@ const connection = async () => {
   try {
     await mongoose.connect("mongodb://localhost:27017/dummy_database");
     console.log("Database connected successfully.");
-    console.log(mongoose.connection.readyState);
   } catch (error) {
     console.error("Database connection failed. ", error.message);
   }
