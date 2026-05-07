@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
   }
 });
 
-/* =============== HANDLING USER DATA =============== */
+/* =============== CREATE =============== */
 app.post("/saveform", async (req, res) => {
   try {
     const result = new userSchema(req.body); // INSTANCE CREATED
@@ -34,22 +34,58 @@ app.post("/saveform", async (req, res) => {
     res.redirect("/userdata");
     console.log("User registered successfully");
   } catch (error) {
-    console.error("Something went wrong ", error.message);
+    res.send("Something went wrong while storing the data.");
+    console.error(error.message);
   }
 });
 
-/* =============== READING DATA =============== */
+/* =============== READ =============== */
 app.get("/userdata", async (req, res) => {
   try {
     const result = await userSchema.find();
     res.render("userdata.ejs", { data: result });
     console.log("Data fetched successfully");
   } catch (error) {
-    console.error("Something went wrong ", error.message);
+    res.send("Something went wrong while getting the data.");
+    console.error(error.message);
   }
 });
 
-/* =============== DELETING USER =============== */
+/* =============== UPDATE FORM =============== */
+app.get("/edit/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    let result = await userSchema.findById(id);
+    res.render("edit.ejs", { data: result });
+  } catch (error) {
+    res.send("Something went wrong.");
+    console.error(error.message);
+  }
+});
+
+/* =============== UPDATE =============== */
+app.post("/updateform/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    let result = req.body;
+    await userSchema.findByIdAndUpdate(id, result);
+    res.redirect("/userdata");
+    console.log("User updated successfully");
+  } catch (error) {
+    res.send("Something went wrong while updating the data.");
+    console.error(error.message);
+  }
+});
+
+/*
+
+1. FETCH THE DATA FROM DATABASE OF THE SPECIFIC USER.
+2. THEN RENDER TO EDIT PAGE WITH USER DATA
+3. DISPLAY THAT DATA IN A FORM AND THEN PERFORM THE UPDATE OPERATION
+
+*/
+
+/* =============== DELETE =============== */
 app.get("/delete/:id", async (req, res) => {
   try {
     // ACCESSING ID -> req.params.id
@@ -58,8 +94,8 @@ app.get("/delete/:id", async (req, res) => {
     res.redirect("/userdata");
     console.log("User deleted successfully.");
   } catch (error) {
-    res.send("Something went wrong.");
-    console.log(error.message);
+    res.send("Something went wrong while deleting the data.");
+    console.error(error.message);
   }
 });
 
