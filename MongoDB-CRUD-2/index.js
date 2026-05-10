@@ -93,6 +93,46 @@ app.get("/delete/:id", async (req, res) => {
   }
 });
 
+/* =============== EDIT =============== */
+app.get("/edit/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    let result = await profileSchema.findById(id);
+    return res.render("edit.ejs", { data: result });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+app.post("/updateuser/:id", upload.single("userProfile"), async (req, res) => {
+  try {
+    let id = req.params.id;
+    const { userName, userEmail, userPassword, userPhone, userAddress } =
+      req.body;
+
+    const updatedData = {
+      userName: userName,
+      userEmail: userEmail,
+      userPassword: userPassword,
+      userPhone: userPhone,
+      userAddress: userAddress,
+    };
+
+    // HANDLE BUG IF USER DOESN'T UPLOAD PROFILE IMAGE
+    if (req.file) {
+      if (req.file.filename) {
+        updatedData.userProfile = req.file.filename;
+      }
+    }
+
+    await profileSchema.findByIdAndUpdate(id, updatedData);
+    console.log("Profile updated");
+    res.redirect("/userprofiles");
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
 /* =============== FALLBACK FOUTING =============== */
 app.use((req, res) => {
   res.render("error.ejs");
